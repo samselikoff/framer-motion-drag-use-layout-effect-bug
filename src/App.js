@@ -1,5 +1,5 @@
-import { motion, useDragControls, useMotionValue } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { motion, useMotionValue } from "framer-motion";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 export default function App() {
   let [progress, setProgress] = useState(100);
@@ -18,8 +18,13 @@ export default function App() {
       <div className="mt-8">
         <p>Current: {Math.floor(progress * 10) / 10}</p>
       </div>
-      <div>
-        <button onClick={() => setProgress(50)}>Set to 50</button>
+      <div className="mt-2">
+        <button
+          className="px-2 py-1 border rounded active:bg-gray-50"
+          onClick={() => setProgress(50)}
+        >
+          Set to 50
+        </button>
       </div>
     </div>
   );
@@ -30,7 +35,6 @@ function Slider({ min, max, value, onChange }) {
   let fullBarRef = useRef();
   let buttonSize = 10;
   let scrubberX = useMotionValue();
-  let dragControls = useDragControls();
 
   function handleDrag(event) {
     let { left, width } = fullBarRef.current.getBoundingClientRect();
@@ -39,7 +43,8 @@ function Slider({ min, max, value, onChange }) {
     onChange(newProgress * (max - min));
   }
 
-  useEffect(() => {
+  // useEffect seems to fix it, but results in FOUC
+  useLayoutEffect(() => {
     let { width } = fullBarRef.current.getBoundingClientRect();
     let newProgress = value / (max - min);
     let newX = newProgress * width;
@@ -61,37 +66,22 @@ function Slider({ min, max, value, onChange }) {
       />
 
       <div
+        data-test="slider-background"
         className="absolute flex items-center"
         style={{ left: buttonSize / 2, right: buttonSize / 2 }}
       >
         <div
-          data-test="slider-background"
           ref={fullBarRef}
           className="absolute inset-x-0 flex items-center py-1 cursor-grab"
-          onPointerDown={(event) => {
-            dragControls.start(event, { snapToCursor: true });
-            let { left, width } = fullBarRef.current.getBoundingClientRect();
-            let position = event.pageX - left;
-            let newProgress = clamp(position, 0, width) / width;
-            onChange(newProgress * (max - min));
-          }}
         >
           <div className="w-full h-0.5 bg-gray-300 rounded-full" />
         </div>
-
-        <div
-          data-test="slider-current-progress"
-          className="absolute h-0.5 rounded-full bg-gray-700 pointer-events-none"
-          style={{ width: `${(value / (max - min)) * 100}%` }}
-        />
       </div>
 
       <motion.button
         data-test="slider-scrubber"
         drag="x"
-        whileDrag={{ scale: 5 }}
         dragConstraints={constraintsRef}
-        dragControls={dragControls}
         dragElastic={0}
         dragMomentum={false}
         onDrag={handleDrag}
@@ -110,5 +100,3 @@ function Slider({ min, max, value, onChange }) {
 function clamp(number, min, max) {
   return Math.max(min, Math.min(number, max));
 }
-
-// function getProgressFrom
