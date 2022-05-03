@@ -7,20 +7,31 @@ export default function App() {
   let max = 200;
 
   return (
-    <div className="p-8 w-80">
-      <div className="flex justify-between mb-4">
-        <span className="border-l border-green-500">{min}</span>
-        <span className="border-r border-green-500">{max}</span>
+    <div style={{ padding: 32, width: 320 }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          marginBottom: 16,
+        }}
+      >
+        <span style={{ borderLeft: "1px solid rgb(34 197 94)" }}>{min}</span>
+        <span style={{ borderLeft: "1px solid rgb(34 197 94)" }}>{max}</span>
       </div>
 
       <Slider min={min} max={max} value={progress} onChange={setProgress} />
 
-      <div className="mt-8">
+      <div style={{ marginTop: 32 }}>
         <p>Current: {Math.floor(progress * 10) / 10}</p>
       </div>
-      <div className="mt-2">
+      <div style={{ marginTop: 8 }}>
         <button
-          className="px-2 py-1 border rounded active:bg-gray-50"
+          style={{
+            padding: "4px 8px",
+            border: "1px solid rgb(229, 231, 235)",
+            background: "white",
+            borderRadius: 4,
+          }}
           onClick={() => setProgress(50)}
         >
           Set to 50
@@ -56,25 +67,55 @@ function Slider({ min, max, value, onChange }) {
   return (
     <div
       data-test="slider"
-      className="relative flex items-center"
-      style={{ marginLeft: -buttonSize / 2, marginRight: -buttonSize / 2 }}
+      style={{
+        position: "relative",
+        display: "flex",
+        alignItems: "center",
+        marginLeft: -buttonSize / 2,
+        marginRight: -buttonSize / 2,
+      }}
     >
       <div
         data-test="slider-constraints"
         ref={constraintsRef}
-        className="absolute inset-x-0 h-0.5 rounded-full"
+        style={{
+          position: "absolute",
+          left: 0,
+          right: 0,
+          height: 2,
+          borderRadius: 9999,
+        }}
       />
 
       <div
         data-test="slider-background"
-        className="absolute flex items-center"
-        style={{ left: buttonSize / 2, right: buttonSize / 2 }}
+        style={{
+          position: "absolute",
+          display: "flex",
+          alignItems: "center",
+          left: buttonSize / 2,
+          right: buttonSize / 2,
+        }}
       >
         <div
           ref={fullBarRef}
-          className="absolute inset-x-0 flex items-center py-1 cursor-grab"
+          style={{
+            position: "absolute",
+            left: 0,
+            right: 0,
+            display: "flex",
+            alignItems: "center",
+            padding: "4px 0",
+          }}
         >
-          <div className="w-full h-0.5 bg-gray-300 rounded-full" />
+          <div
+            style={{
+              width: "100%",
+              height: 2,
+              background: "rgb(209 213 219)",
+              borderRadius: 9999,
+            }}
+          />
         </div>
       </div>
 
@@ -85,12 +126,15 @@ function Slider({ min, max, value, onChange }) {
         dragElastic={0}
         dragMomentum={false}
         onDrag={handleDrag}
-        className="absolute bg-red-500 rounded-full cursor-grab active:cursor-grabbing"
         style={{
           x: scrubberX,
           top: -buttonSize / 2,
           width: buttonSize,
           height: buttonSize,
+          padding: 0,
+          background: "rgb(239 68 68)",
+          border: "none",
+          borderRadius: 9999,
         }}
       />
     </div>
